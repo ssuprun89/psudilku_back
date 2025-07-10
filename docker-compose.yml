@@ -48,3 +48,17 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  redis:
+    container_name: psudilku-redis
+
+    image: redis:alpine
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 10
