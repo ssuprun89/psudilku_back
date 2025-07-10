@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "psudilku"
+version = "0.0.1"
+description = "Backend part of project Psuldilku"
+authors = ["Suprun Sergey <suprun.sergey89@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.2.1"
+redis = "^4.5.5"
+python-dotenv = "^1.0.0"
+uvicorn = "^0.22.0"
+django-cors-headers = "^4.0.0"
+channels = "^4.0.0"
+daphne = "^4.0.0"
+channels-redis = "^4.1.0"
+djangorestframework = "^3.14.0"
+djangorestframework-simplejwt = "^5.2.2"
+celery = "^5.3.1"
+django-filter = "^23.2"
+psycopg2-binary = "^2.9.7"
+django-storages = "^1.14"
+boto3 = "^1.28.40"
+django-celery-beat = "^2.5.0"
+cryptography = "^41.0.5"
+
+[tool.poetry.group.tests]
+optional = true
+
+[tool.poetry.group.tests.dependencies]
+black = "^22.6.0"
+flake8 = "^6.1.0"
+tox = "^4.11.3"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.group.local]
+optional = true
+
+[tool.poetry.group.local.dependencies]
+black = "^22.6.0"
+flake8 = "^6.1.0"
+
+
+[tool.black]
+line-length = 120
+extend-exclude = '''
+# ^/ - exclude from root of the project
+# | - exclude anywhere in project
+(
+    ^/bob_back/celery.py
+)
+'''
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
