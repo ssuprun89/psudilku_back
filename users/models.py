@@ -9,11 +9,12 @@ from utils.base_model import UUIDModel
 
 class User(AbstractBaseUser, PermissionsMixin, UUIDModel):
 
-    username = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255)
+    apple_id = models.CharField(max_length=255, unique=True)
 
     objects = UserManager()
-    EMAIL_FIELD = "username"
-    USERNAME_FIELD = "username"
+    EMAIL_FIELD = "apple_id"
+    USERNAME_FIELD = "apple_id"
 
     class Meta:
         verbose_name = "User"

@@ -99,7 +99,8 @@ class Phase(UUIDModel):
         return insert_card
 
     def change_queue(self):
-        players = PhasePlayers.objects.filter(phase=self).order_by("created_at")
+        order_by = "finish_at" if self.start else "created_at"
+        players = PhasePlayers.objects.filter(phase=self).order_by(order_by)
         next_player, player_id, cancel, break1 = False, None, False, False
 
         while True:

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "psudilku"
-version = "0.0.1"
+version = "0.0.2"
 description = "Backend part of project Psuldilku"
 authors = ["Suprun Sergey <suprun.sergey89@gmail.com>"]
 
