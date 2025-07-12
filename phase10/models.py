@@ -41,6 +41,7 @@ class Phase(UUIDModel):
         for idx, player in enumerate(players):
             player.hand = deck[idx * 10: (idx + 1) * 10]
             player.current_queue = idx == 0
+            player.order_queue = idx
             player.finish_at = None
             player.complete = [[]] if player.level in [4, 5, 6, 8] else [[], []]
             player.save()
@@ -99,8 +100,7 @@ class Phase(UUIDModel):
         return insert_card
 
     def change_queue(self):
-        order_by = "finish_at" if self.start else "created_at"
-        players = PhasePlayers.objects.filter(phase=self).order_by(order_by)
+        players = PhasePlayers.objects.filter(phase=self).order_by("order_queue")
         next_player, player_id, cancel, break1 = False, None, False, False
 
         while True:
@@ -147,4 +147,5 @@ class PhasePlayers(UUIDModel):
     current_queue = models.BooleanField(default=False)
     finish_level = models.BooleanField(default=False)
     finish_at = models.DateTimeField(null=True, blank=True)
+    order_queue = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
