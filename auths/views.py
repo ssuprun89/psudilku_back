@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView
 
 from users.models import User
+from users.serializers import UserSerializer
 
 
 class TokenView(TokenObtainPairView):
@@ -20,7 +21,11 @@ class TokenView(TokenObtainPairView):
         user, created = User.objects.update_or_create(apple_id=apple_id, defaults={"username": username, "password": "<PASSWORD>"})
 
         refresh = RefreshToken.for_user(user)
-        return Response({"refresh": str(refresh), "access": str(refresh.access_token)}, status=200)
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user_data": UserSerializer(user).data
+        }, status=200)
 
 
 class TokenVerifyViewToken(TokenVerifyView):
