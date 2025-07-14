@@ -32,6 +32,7 @@ class Phase(UUIDModel):
     start = models.BooleanField(default=False)
     deck = ArrayField(models.JSONField(), default=list)
     discard = ArrayField(models.JSONField(), default=list)
+    round = models.IntegerField(default=1)
 
     def start_game(self):
         deck = generate_deck()
@@ -125,9 +126,7 @@ class Phase(UUIDModel):
 
     def finish_round(self):
         players = PhasePlayers.objects.filter(phase=self).order_by("finish_at")
-        print('finish round')
         for idx, player in enumerate(players):
-            print(player.user.username, idx==0)
             player.current_queue = idx == 0
             if player.finish_level:
                 player.level = player.level + 1
@@ -135,6 +134,8 @@ class Phase(UUIDModel):
             player.complete = []
             player.finish_level = False
             player.save()
+        self.round = self.round + 1
+        self.save()
 
 
 class PhasePlayers(UUIDModel):
