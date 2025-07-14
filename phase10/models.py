@@ -101,7 +101,7 @@ class Phase(UUIDModel):
 
     def change_queue(self):
         players = PhasePlayers.objects.filter(phase=self).order_by("order_queue")
-        next_player, player_id, cancel, break1 = False, None, False, False
+        next_player, player, cancel, break1 = False, None, False, False
 
         while True:
             if break1:
@@ -118,10 +118,10 @@ class Phase(UUIDModel):
                         continue
                     player.current_queue = True
                     player.save()
-                    player_id = player.id
+                    player = player
                     break1 = True
                     break
-        return {"user": str(player_id)}
+        return {"user": str(player.id), "u_id": str(player.user.id)}
 
     def finish_round(self):
         players = PhasePlayers.objects.filter(phase=self).order_by("finish_at")
