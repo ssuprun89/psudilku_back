@@ -1,10 +1,17 @@
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView
 
 from users.models import User
 from users.serializers import UserSerializer
+
+
+class PingView(APIView):
+    permission_classes = (AllowAny,)
+    def get(self, request, *args, **kwargs):
+        return Response({"status": "ok"}, status=200)
 
 
 class TokenView(TokenObtainPairView):
@@ -31,3 +38,5 @@ class TokenView(TokenObtainPairView):
 class TokenVerifyViewToken(TokenVerifyView):
     queryset = User.objects.filter()
     permission_classes = (AllowAny,)
+
+# проверить сборку ордера от большего к меньшему
