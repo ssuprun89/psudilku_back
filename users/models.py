@@ -28,12 +28,15 @@ class UserGames(UUIDModel):
     game = models.CharField(max_length=255, choices=GameChoices.choices)
     free_trial = models.DateTimeField(null=True)
     paid = models.BooleanField(default=False)
-    apple_id = models.CharField(max_length=255, unique=True)
+    apple_id = models.CharField(max_length=255)
 
     @classmethod
     def create_for_new_user(cls, user):
+        apple_id_for_game = {
+            "zone rush": "7f33b933ccb74651b833382c9a6c9e8c",
+        }
         for i in cls.GameChoices.choices:
-            cls(user=user, game=i[0]).save()
+            cls(user=user, game=i[0], apple_id=apple_id_for_game[i[0]]).save()
 
     class Meta:
         unique_together = ("user", "game")
