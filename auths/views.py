@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView
 
-from users.models import User
+from users.models import User, UserGames
 from users.serializers import UserSerializer
 
 
@@ -26,7 +26,8 @@ class TokenView(TokenObtainPairView):
             return Response({"detail": "apple_id and username required"}, status=400)
 
         user, created = User.objects.update_or_create(apple_id=apple_id, defaults={"username": username, "password": "<PASSWORD>"})
-
+        if created:
+            UserGames.create_for_new_user(user)
         refresh = RefreshToken.for_user(user)
         return Response({
             "refresh": str(refresh),
