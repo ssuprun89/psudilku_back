@@ -23,8 +23,8 @@ class WhoIamViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
 
     @action(methods=["POST"], detail=True, url_path="start-game")
     def start_game(self, request, code=None):
-        # game = self.get_object()
-        # game.start_game()
+        game = self.get_object()
+        game.start_game()
         game = self.get_object()
         payload = WhoIamSerializer(game).data
 
