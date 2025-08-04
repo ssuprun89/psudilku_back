@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "users",
     "auths",
     "phase10",
+    "whoiam",
 ]
 
 MIDDLEWARE = [

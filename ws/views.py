@@ -6,6 +6,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from phase10.models import Phase, PhasePlayers
 from phase10.serializers import PhaseUserSerializer
+from whoiam.models import WhoIam, WhoIamPlayers
+from whoiam.serializers import WhoIamUserSerializer
 from ws.consumer import WebsocketConnection
 
 
@@ -63,4 +65,43 @@ class PhaseWebsocketConsumer(WebsocketConnection):
     def disconnect(self, close_code):
         game = Phase.objects.get(id=self.room_name)
         PhasePlayers.objects.filter(phase=game, user=self.scope["user"]).update(active=False)
+        async_to_sync(self.channel_layer.group_discard)(self.room_group_name, self.channel_name)
+
+
+class WhoIamWebsocketConsumer(WebsocketConnection):
+    def connect(self):
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        game = WhoIam.objects.get(id=self.room_name)
+
+        user, _ = WhoIamPlayers.objects.get_or_create(whoiam=game, user=self.scope["user"], defaults={})
+        self.room_group_name = f"whoiam_{self.room_name}"
+
+        async_to_sync(self.channel_layer.group_add)(self.room_group_name, self.channel_name)
+        self.accept()  # принять соединение
+
+        payload = {
+            "event": "connect_to_room",
+            "payload": WhoIamUserSerializer(user).data,
+        }
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                "type": "send_message",
+                "message": json.dumps(payload, cls=DjangoJSONEncoder)
+            },
+        )
+
+        game.save()
+
+    def receive(self, text_data, **kwargs):
+        # text_data_json = json.loads(text_data)
+        # game = Phase.objects.get(id=self.room_name)
+        #
+        # text_data = json.dumps(text_data_json)
+        super().receive(text_data, **kwargs)
+
+    def disconnect(self, close_code):
+        game = WhoIam.objects.get(id=self.room_name)
+        WhoIamPlayers.objects.filter(whoiam=game, user=self.scope["user"]).update(active=False)
         async_to_sync(self.channel_layer.group_discard)(self.room_group_name, self.channel_name)
