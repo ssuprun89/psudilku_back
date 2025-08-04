@@ -18,10 +18,10 @@ class WhoIam(UUIDModel):
 
     def start_game(self):
         self.start = True
-        players = WhoIamPlayers.objects.filter(whoiam=self).order_by("created_at")
+        players = list(WhoIamPlayers.objects.filter(whoiam=self).order_by("created_at"))
         for idx, player in enumerate(players):
             if len(players) - 1 == idx:
-                player.for_user = players[-1].user
+                player.for_user = players[0].user
             else:
                 player.for_user = players[idx+1].user
             player.word = ""
