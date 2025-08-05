@@ -37,6 +37,7 @@ class WhoIamPlayers(UUIDModel):
     active = models.BooleanField(default=True)
     complete = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
     word = models.CharField(max_length=100, null=True, blank=True)
     create_word = models.BooleanField(default=False)
     for_user = models.ForeignKey(
