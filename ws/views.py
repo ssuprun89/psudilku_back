@@ -16,7 +16,7 @@ class PhaseWebsocketConsumer(WebsocketConnection):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         game = Phase.objects.get(id=self.room_name)
 
-        user, _ = PhasePlayers.objects.get_or_create(phase=game, user=self.scope["user"], defaults={})
+        user, _ = PhasePlayers.objects.update_or_create(phase=game, user=self.scope["user"], defaults={"active": True})
         self.room_group_name = f"phase_{self.room_name}"
 
         async_to_sync(self.channel_layer.group_add)(self.room_group_name, self.channel_name)
