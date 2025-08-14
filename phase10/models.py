@@ -1,4 +1,3 @@
-import json
 import uuid
 import random
 
@@ -33,6 +32,7 @@ class Phase(UUIDModel):
     deck = ArrayField(models.JSONField(), default=list)
     discard = ArrayField(models.JSONField(), default=list)
     round = models.IntegerField(default=1)
+    level_config = models.JSONField(default=dict)
 
     def start_game(self):
         deck = generate_deck()
@@ -59,7 +59,6 @@ class Phase(UUIDModel):
         self.deck = deck[(len(players) * 10) + 1:]
         self.start = True
         self.save()
-
 
     def put_card(self, payload):
         if payload["from_user"] == "game":
@@ -141,7 +140,7 @@ class Phase(UUIDModel):
 class PhasePlayers(UUIDModel):
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE, related_name="players")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    level = models.IntegerField(default=1)
+    level = models.IntegerField(default=0)
     hand = ArrayField(models.JSONField(), default=list)
     complete = models.JSONField(default=list)
     active = models.BooleanField(default=True)
@@ -149,4 +148,118 @@ class PhasePlayers(UUIDModel):
     finish_level = models.BooleanField(default=False)
     finish_at = models.DateTimeField(null=True, blank=True)
     order_queue = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class PhaseCustomLevels(UUIDModel):
+    DEFAULT = [
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 3,
+                },
+                {
+                    "condition": "all",
+                    "count": 3,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 3,
+                },
+                {
+                    "condition": "order",
+                    "count": 4,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 4,
+                },
+                {
+                    "condition": "order",
+                    "count": 4,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "order",
+                    "count": 7,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "order",
+                    "count": 8,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "order",
+                    "count": 9,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 4,
+                },
+                {
+                    "condition": "all",
+                    "count": 4,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "color",
+                    "count": 7,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 5,
+                },
+                {
+                    "condition": "all",
+                    "count": 2,
+                },
+            ],
+        },
+        {
+            "rules": [
+                {
+                    "condition": "all",
+                    "count": 5,
+                },
+                {
+                    "condition": "all",
+                    "count": 3,
+                },
+            ],
+        },
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    config = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
