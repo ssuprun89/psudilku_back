@@ -9,7 +9,12 @@ from utils.base_model import UUIDModel
 
 
 def generate_code():
-    return uuid.uuid4().hex[:4]
+    while True:
+        code = uuid.uuid4().hex[:4]
+        try:
+            Phase.objects.get(code=code)
+        except:
+            return code
 
 
 def generate_deck():
