@@ -44,7 +44,7 @@ class Phase(UUIDModel):
             player.current_queue = idx == 0
             player.order_queue = idx
             player.finish_at = None
-            player.complete = [[]] if player.level in [4, 5, 6, 8] else [[], []]
+            player.complete = [[]] if len(self.level_config.get(str(player.level), {"rules": [1]})["rules"]) == 1 else [[], []]
             player.save()
         self.discard = [deck[(len(players) * 10)]]
         if self.discard[0]["number"] == "cancel" and players.count() > 1:
