@@ -16,14 +16,14 @@ class UserViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin, GetObjec
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        return [AllowAny()] if self.action == 'create' else [IsAuthenticated()]
+        return [AllowAny()] if self.action == "create" else [IsAuthenticated()]
 
 
 class UserGamesViewSet(GenericViewSet, RetrieveModelMixin, UpdateModelMixin, GetObject404):
     queryset = UserGames.objects.all()
     serializer_class = UserGamesSerializer
 
-    @action(detail=True, methods=['patch'], url_path='free-trial')
+    @action(detail=True, methods=["patch"], url_path="free-trial")
     def free_trial(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.free_trial is None:

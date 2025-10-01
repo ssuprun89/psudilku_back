@@ -10,6 +10,7 @@ from users.serializers import UserSerializer
 
 class PingView(APIView):
     permission_classes = (AllowAny,)
+
     def get(self, request, *args, **kwargs):
         return Response({"status": "ok"}, status=200)
 
@@ -25,19 +26,21 @@ class TokenView(TokenObtainPairView):
         if not apple_id or not username:
             return Response({"detail": "apple_id and username required"}, status=400)
 
-        user, created = User.objects.update_or_create(apple_id=apple_id, defaults={"username": username, "password": "<PASSWORD>"})
+        user, created = User.objects.update_or_create(
+            apple_id=apple_id, defaults={"username": username, "password": "<PASSWORD>"}
+        )
         if created:
             UserGames.create_for_new_user(user)
         refresh = RefreshToken.for_user(user)
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "user_data": UserSerializer(user).data
-        }, status=200)
+        return Response(
+            {"refresh": str(refresh), "access": str(refresh.access_token), "user_data": UserSerializer(user).data},
+            status=200,
+        )
 
 
 class TokenVerifyViewToken(TokenVerifyView):
     queryset = User.objects.filter()
     permission_classes = (AllowAny,)
+
 
 # проверить сборку ордера от большего к меньшему

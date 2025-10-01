@@ -14,7 +14,6 @@ from ws.urls import websocket_urlpatterns
 from psudilku.middleware.auth_ws_middleware import TokenAuthMiddleware
 
 
-application = ProtocolTypeRouter({
-    'http': django_asgi_app,
-    'websocket': TokenAuthMiddleware(URLRouter(websocket_urlpatterns))
-})
+application = ProtocolTypeRouter(
+    {"http": django_asgi_app, "websocket": TokenAuthMiddleware(URLRouter(websocket_urlpatterns))}
+)

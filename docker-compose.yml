@@ -10,7 +10,6 @@ volumes:
   redis-data:
 
 services:
-
   postgres:
     container_name: psudilku-postgres
 
@@ -48,6 +47,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   redis:
     container_name: psudilku-redis
@@ -62,3 +63,35 @@ services:
       interval: 1s
       timeout: 3s
       retries: 10
+
+  celery:
+    container_name: psudilku-celery
+
+    build: .
+    command: celery -A psudilku worker --loglevel=DEBUG
+
+    volumes:
+      - .:/app/
+
+    env_file:
+      - .env
+
+    depends_on:
+      - backend
+
+  celery-beat:
+    restart: always
+    container_name: bon-celery-beat
+
+    build: .
+
+    command: celery -A psudilku  beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+    volumes:
+      - .:/app/
+
+    env_file:
+      - .env
+
+    depends_on:
+      - backend

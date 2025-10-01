@@ -6,6 +6,7 @@ from users.models import User
 from users.serializers import UserSerializer
 from .models import Phase, PhasePlayers, PhaseCustomLevels
 
+
 def is_uuid(value: str) -> bool:
     try:
         uuid.UUID(str(value))
@@ -16,21 +17,28 @@ def is_uuid(value: str) -> bool:
 
 class PhaseUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = PhasePlayers
         fields = "__all__"
 
 
 class PhaseSerializer(serializers.ModelSerializer):
-    admin = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=serializers.CurrentUserDefault())  # Auto-set admin
+    admin = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )  # Auto-set admin
     players = PhaseUserSerializer(many=True, read_only=True)
+    change_queue_time = serializers.SerializerMethodField(read_only=True)
+
+    def get_change_queue_time(self, obj):
+        return obj.change_queue_time.timestamp() if obj.change_queue_time else None
 
     def get_players(self, obj):
         return [UserSerializer(player.user).data for player in obj.players.all()]
 
     def validate(self, attrs):
         if attrs.get("level_config") == "default":
-            level_config = PhaseCustomLevels.DEFAULT
+            level_config = PhaseCustomLevels.DEFAULT_LEVELS
         elif is_uuid(attrs.get("level_config")):
             level_config = PhaseCustomLevels.objects.filter(pk=attrs.get("level_config")).first()
             if not level_config:
@@ -63,14 +71,15 @@ class PhaseSerializer(serializers.ModelSerializer):
         attrs["level_config"] = config
         return super().validate(attrs)
 
-
     class Meta:
         model = Phase
         fields = "__all__"  # Include all fields
 
 
 class PhaseCustomLevelSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=serializers.CurrentUserDefault())  # Auto-set admin
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )  # Auto-set admin
 
     class Meta:
         model = PhaseCustomLevels

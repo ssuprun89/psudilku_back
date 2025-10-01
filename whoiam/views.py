@@ -31,7 +31,12 @@ class WhoIamViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
 
         async_to_sync(channel_layer.group_send)(
             f"whoiam_{game.id}",
-            {"type": "send_message", "message": json.dumps({"event": data.get("event", "start_game"), "payload": payload}, cls=DjangoJSONEncoder)},
+            {
+                "type": "send_message",
+                "message": json.dumps(
+                    {"event": data.get("event", "start_game"), "payload": payload}, cls=DjangoJSONEncoder
+                ),
+            },
         )
         return Response(payload, status=200)
 

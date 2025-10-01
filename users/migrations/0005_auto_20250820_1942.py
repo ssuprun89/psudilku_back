@@ -2,17 +2,15 @@
 
 from django.db import migrations
 
+
 def add_user_games(apps, schema_editor):
     # We can't import the Person model directly as it may be a newer
     # version than this migration expects. We use the historical version.
     UserGames = apps.get_model("users", "UserGames")
     User = apps.get_model("users", "User")
     for user in User.objects.all():
-        UserGames.objects.create(
-            user=user,
-            game="who iam",
-            apple_id="com.psudilku.whoiam"
-        )
+        UserGames.objects.create(user=user, game="who iam", apple_id="com.psudilku.whoiam")
+
 
 class Migration(migrations.Migration):
 

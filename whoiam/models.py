@@ -23,7 +23,7 @@ class WhoIam(UUIDModel):
             if len(players) - 1 == idx:
                 player.for_user = players[0].user
             else:
-                player.for_user = players[idx+1].user
+                player.for_user = players[idx + 1].user
             player.word = ""
             player.create_word = False
             player.complete = False
@@ -41,9 +41,5 @@ class WhoIamPlayers(UUIDModel):
     word = models.CharField(max_length=100, null=True, blank=True)
     create_word = models.BooleanField(default=False)
     for_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="who_iam_for_user"
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name="who_iam_for_user"
     )

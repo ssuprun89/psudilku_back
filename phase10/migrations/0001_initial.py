@@ -5,6 +5,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 import phase10.models
+from phase10.models import CardUtils
 import uuid
 
 
@@ -20,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ("system_created_at", models.DateTimeField(default=django.utils.timezone.now)),
-                ("code", models.CharField(default=phase10.models.generate_code, max_length=4, unique=True)),
+                ("code", models.CharField(default=phase10.models.CardUtils.generate_code, max_length=4, unique=True)),
                 ("start", models.BooleanField(default=False)),
                 (
                     "deck",
